@@ -1,0 +1,12 @@
+input {
+  width: 100%;
+}
+
+.submit {
+  text-align: center;
+  margin: 4px;
+}
+
+select {
+  width: 100%;
+}

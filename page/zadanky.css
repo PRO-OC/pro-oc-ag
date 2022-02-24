@@ -1,0 +1,139 @@
+html {
+  display: table;
+  height: 100%;
+  margin: auto;
+}
+
+body {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  font-size: 15px;
+}
+
+table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table input[type="submit"] {
+  cursor: pointer;
+}
+
+table td, table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table tr:nth-child(even){background-color: #f2f2f2;}
+
+tbody tr:hover {background-color: #ddd;}
+
+table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+}
+
+.button-other {
+  background-color: #4068A9 !important; 
+  color: #FFF !important; 
+  text-shadow: 1px 1px 0 #000 !important; 
+}
+
+.button-other:hover {
+  background-color: rgb(146, 181, 238) !important;
+  color: #FFF !important;
+  text-shadow: 1px 1px 0 #000 !important;
+}
+
+.ui-button {
+  background: #FFF;
+}
+
+.ui-widget {
+  font-family: Verdana,Arial,sans-serif;
+  font-size: 1.1em;
+}
+
+.ui-state-default {
+  font-weight: normal;
+  border: 1px solid #d3d3d3;
+}
+
+.ui-button {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 5px 0;
+  text-decoration: none;
+  width: auto;
+  cursor: pointer;
+  -webkit-box-shadow: 0 0 4px 0px rgba(0, 0, 0, 0.75) inset;
+  -moz-box-shadow: 0 0 4px 0px rgba(0, 0, 0, 0.75) inset;
+  box-shadow: 0 0 4px 0px rgba(0, 0, 0, 0.75) inset;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  vertical-align: top;
+}
+
+.button-action {
+  background-color: #c0843f !important;
+  color: #FFF !important;
+  text-shadow: 1px 1px 0 #000 !important;
+}
+
+.button-action:hover {
+  background-color: rgb(247, 187, 119) !important;
+  color: #FFF !important;
+  text-shadow: 1px 1px 0 #000 !important;
+}
+
+.fieldGraphic, div.formCell {
+  padding: 0.3% 0.8%;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+
+input[type="text"] {
+  background-image: none;
+  background-color: whitesmoke;
+  font-size: 16px;
+  padding: 4px 7px;
+  border: 1px solid #ccc;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  -moz-box-shadow: 2px 2px 3px #666;
+  -webkit-box-shadow: 2px 2px 3px #666;
+  box-shadow: 2px 2px 3px #666;
+  outline: 0;
+  -webkit-appearance: none;
+  height: 22px;
+}
+
+input[type="text"], input[type="text"][data-val-required], input[type="date"][data-val-required] {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+input, select, textarea {
+  padding: 5px 7px;
+  overflow: visible;
+  height: auto;
+  border: 1px solid #B2ABA2;
+  margin: 3px 0 5px 0;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
