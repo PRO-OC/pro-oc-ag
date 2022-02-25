@@ -7,6 +7,7 @@
   "action": {
     "default_popup": "popup/popup.html"
   },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsP/Sfezzf7KaL0VMLHlvtXl3neZXdZDY1SHxAwRhFtGyi7t/aBFdpbzv2Bg556Oa7BaF+gxowI+ellqusmgaZ1xSVPz5grw8u2CEXMSSvywnOxzkRaqk1FWpkvBaJA9Uy+itLEQYkqcyvhTkrXPVijI4WvhTrc2zEmWhZnQkwT9iOxOxQG1VtOLGkMzh+g9dH4a3e7T1jm0MXZ913ffeo5Ew5vnm9j6LRAVZIwKcr3QVEodOrXWlvZMhHBrcsgXk1k6+e/GUUagqdnw7BCYDqMw7xnNto60TPnPAfftMubvf0a0hFbYw5hx5QWkGXV1ijxQr7cmfag+GuNSLt8EVJQIDAQAB",
   "host_permissions": [
     "*://*.ksrzis.cz/*"
   ],
