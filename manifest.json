@@ -29,6 +29,7 @@
     "storage",
     "activeTab",
     "cookies",
-    "tabs"
+    "tabs",
+    "downloads"
   ]
 }

@@ -293,25 +293,7 @@ function getAGVyrobceTestuKod(vyrobceTestuNazev, vyrobceTestuKodOptions, vyrobce
 
 function printCertifikat(useTestRegisters, cislo) {
   getRegistrCUDOvereniGetCertifikatCisloZadankyUrl(useTestRegisters, cislo, function(url) {
-
-    var xhrCertifikat = new XMLHttpRequest();
-    xhrCertifikat.open("GET", url, true);
-    xhrCertifikat.setRequestHeader("Content-Type","application/json; charset=UTF-8");
-    xhrCertifikat.responseType = 'blob';
-    xhrCertifikat.onreadystatechange = function() {
-      if(xhrCertifikat.readyState === XMLHttpRequest.DONE && xhrCertifikat.status == 200) {
-
-        var file = new Blob([xhrCertifikat.response], { 
-          type: "application/pdf" 
-        });
-
-        var fileUrl = URL.createObjectURL(file);
-        var printWindow = window.open();
-        printWindow.location.href = fileUrl;
-        printWindow.window.print();
-      }
-    }
-    xhrCertifikat.send();
+    chrome.downloads.download({url});
   });
 }
 
@@ -648,7 +630,7 @@ function displayZadankyKPotvrzeni(zadanky) {
         if (zadanka.ProvedenOdber) {
           var td = document.createElement("td");
           addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek", zadanka, false);
-          addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek a vytisknout certifikát", zadanka, true);
+          addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek a stáhnout certifikát", zadanka, true);
           tr.appendChild(td);
         } else {
           addTextTdToTr(tr, "Není potvrzen odběr.");
@@ -664,7 +646,7 @@ function displayZadankyKPotvrzeni(zadanky) {
           var td = document.createElement("td");
           // remove this statement for test purpose printing certificate
           if(zadanka.ProvedenOdber) {
-            addZadankaCertifikatButtonToTr(td, "Vytisknout certifikát", zadanka);
+            addZadankaCertifikatButtonToTr(td, "Stáhnout certifikát", zadanka);
           }
           tr.appendChild(td);
 
