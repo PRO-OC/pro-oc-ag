@@ -304,7 +304,8 @@ function printCertifikat(useTestRegisters, cislo) {
         });
 
         var fileUrl = URL.createObjectURL(file);
-        var printWindow = window.open(fileUrl);
+        var printWindow = window.open();
+        printWindow.location.href = fileUrl;
         printWindow.window.print();
       }
     }
