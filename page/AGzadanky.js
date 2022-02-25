@@ -6,6 +6,8 @@ const AG_VYROBCE_TESTU_KOD = "AGVyrobceTestuKod";
 const AG_VYROBCE_TESTU_TITLE = "AGVyrobceTestuTitle";
 const AG_VYROBCE_LIST_URL = "AGVyrobceListUrl";
 
+const AUTO_REMOVE_CHROME_STORAGE_MINS = 120;
+
 function getRegistrDomain(useTestRegisters, callback) {
   callback(useTestRegisters ? "eregpublicsecure2.ksrzis.cz" : "eregpublicsecure.ksrzis.cz");
 }
@@ -721,8 +723,8 @@ function loadAndDisplayZadankyKPotvrzeni() {
     console.log(allKeys);
   });*/
 
-  chrome.storage.sync.get(CHROME_STORAGE_NAMESPACE, (data) => {
-    displayZadankyKPotvrzeni(data[CHROME_STORAGE_NAMESPACE]);
+  loadAndFilterZadankyToRemove(function(zadanky) {
+    displayZadankyKPotvrzeni(zadanky);
   });
 }
 
@@ -735,3 +737,28 @@ chrome.storage.onChanged.addListener(function(changeSet) {
 window.onload = function() {
   loadAndDisplayZadankyKPotvrzeni();
 };
+
+function isZadankaToRemove(zadanka) {
+  const OrdinaceVystavilDate = new Date(zadanka.OrdinaceVystavilDate);
+  const DatumAutomatickePotvrzeni = new Date(OrdinaceVystavilDate.getTime() + AUTO_REMOVE_CHROME_STORAGE_MINS * 60000);
+
+  var isToRemove = (new Date()) > DatumAutomatickePotvrzeni;
+
+  return isToRemove ? true : false;         
+}
+
+function loadAndFilterZadankyToRemove(callback) {
+
+  chrome.storage.sync.get(CHROME_STORAGE_NAMESPACE, (data) => {
+    if(Array.isArray(data[CHROME_STORAGE_NAMESPACE])) {
+
+      data[CHROME_STORAGE_NAMESPACE] = data[CHROME_STORAGE_NAMESPACE].filter(function(zadanka) {
+        return !isZadankaToRemove(zadanka) ? true : false;
+      });
+
+      chrome.storage.sync.set({[CHROME_STORAGE_NAMESPACE]: data[CHROME_STORAGE_NAMESPACE]}, function() {
+        callback(data[CHROME_STORAGE_NAMESPACE]);
+      });
+    }
+  });
+}
