@@ -726,11 +726,11 @@ function loadAndDisplayZadankyKPotvrzeni() {
 }
 
 chrome.storage.onChanged.addListener(function(changeSet) {
-  if(changeSet.zadanky && changeSet.zadanky.newValue) {
-    displayZadankyKPotvrzeni(changeSet[CHROME_STORAGE_NAMESPACE].newValue);
+  if(changeSet[CHROME_STORAGE_NAMESPACE] && changeSet[CHROME_STORAGE_NAMESPACE].newValue) {
+    window.location.reload();
   }
 });
-  
+
 window.onload = function() {
   loadAndDisplayZadankyKPotvrzeni();
 };
