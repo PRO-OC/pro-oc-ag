@@ -371,7 +371,7 @@ function addZadankaPotvrditButtonToTr(tr, text, zadanka) {
         var heslo = cookieParams.get("heslo");
 
         if(!kodOsoby || !heslo) {
-          return;
+          alert("Je potřeba být přihlášený do registru Žadanky Covid-19.")
         }
 
         getOptionsFromLocalStorage(function(optionsURLSearchParams) {
@@ -477,7 +477,7 @@ function addZadankaZadatVysledekNegativniButtonToTd(td, text, zadanka, jeVyzadov
         var heslo = cookieParams.get("heslo");
 
         if(!kodOsoby || !heslo) {
-          return;
+          alert("Je potřeba být přihlášený do registru Žadanky Covid-19.")
         }
 
         getOptionsFromLocalStorage(function(optionsURLSearchParams) {
