@@ -35,7 +35,7 @@ function getSaveVysledekPoctTestuUrl(useTestRegisters, callback) {
 }
 
 function getAGVyrobceTestuUrl() {
-  return chrome.runtime.getURL("assets/export.json");
+  return chrome.runtime.getURL("assets/export.JSON");
 }
 
 function getRegistrCUDOvereniGetCertifikatCisloZadankyUrl(useTestRegisters, cisloZadanky, callback) {

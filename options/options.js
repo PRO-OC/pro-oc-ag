@@ -53,13 +53,13 @@ function getAGVyrobceTestuList(callback) {
         if(AGVyrobceList.length) {
           callback(true, AGVyrobceList);
         } else {
-          getAGVyrobceTestuListFetch(chrome.runtime.getURL("assets/export.json"), function(AGVyrobceList) {
+          getAGVyrobceTestuListFetch(chrome.runtime.getURL("assets/export.JSON"), function(AGVyrobceList) {
             callback(false, AGVyrobceList);
           });
         }
       });
     } else {
-      getAGVyrobceTestuListFetch(chrome.runtime.getURL("assets/export.json"), function(AGVyrobceList) {
+      getAGVyrobceTestuListFetch(chrome.runtime.getURL("assets/export.JSON"), function(AGVyrobceList) {
         callback(false, AGVyrobceList);
       });
     }
