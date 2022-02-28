@@ -1,0 +1,33 @@
+{
+  "name": "PRO OC AG",
+  "version": "1.0.0",
+  "author": "Lukáš Drahník <ldrahnik@gmail.com>",
+  "manifest_version": 2,
+  "description": "Rozšíření přidává užitečné funkce do modulu Pacienti COVID-19 a Žádanky testů COVID-19 s cílem usnadnit dvoufázové antigenní testování.",
+  "browser_action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [{
+    "matches": [
+      "*://*.ksrzis.cz/*"
+    ],
+    "js": ["content/content.js"]
+  }],
+  "options_ui": {
+    "page": "options/options.html",
+    "browser_style": true
+  },
+  "background": {
+    "scripts": ["background/background.js"],
+    "persistent": true
+  },
+  "permissions": [
+    "*://*.ksrzis.cz/*",
+    "webRequest",
+    "storage",
+    "activeTab",
+    "cookies",
+    "tabs",
+    "downloads"
+  ]
+}

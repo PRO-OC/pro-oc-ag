@@ -143,8 +143,8 @@ function getZadankaDataFromSessionStorage() {
 
 function setZadankaDataToSessionStorage(zadankaForm) {
 
+    console.log(zadankaForm);
     var zadankaFormData = new FormData(zadankaForm);
-    var zadankaData = Object.fromEntries(zadankaFormData.entries());
 
     var OrdinaceVystavilDate = new Date();
     // Testing purpose: -1 hour
@@ -153,12 +153,12 @@ function setZadankaDataToSessionStorage(zadankaForm) {
     var zadankaSentData = {};
 
     zadankaSentData["OrdinaceVystavilDate"] = OrdinaceVystavilDate.toISOString();
-    zadankaSentData["TestovanyCisloPojistence"] = zadankaData["TestovanyCisloPojistence"];
-    zadankaSentData["TestovanyJmeno"] = zadankaData["TestovanyJmeno"];
-    zadankaSentData["TestovanyPrijmeni"] = zadankaData["TestovanyPrijmeni"];
-    zadankaSentData["TestovanyDatumNarozeni"] = zadankaData["TestovanyNarodnost"] == "CZ" ? getDatumNarozeniZRodneCislo(zadankaData["TestovanyCisloPojistence"]) : zadankaData["TestovanyDatumNarozeni"];
-    zadankaSentData["TestovanyNarodnostNazev"] = zadankaData["TestovanyNarodnost"];
-    zadankaSentData["OrdinaceVystavil"] = zadankaData["OrdinaceVystavil"];
+    zadankaSentData["TestovanyCisloPojistence"] = zadankaFormData.get("TestovanyCisloPojistence");
+    zadankaSentData["TestovanyJmeno"] = zadankaFormData.get("TestovanyJmeno");
+    zadankaSentData["TestovanyPrijmeni"] = zadankaFormData.get("TestovanyPrijmeni");
+    zadankaSentData["TestovanyDatumNarozeni"] = zadankaFormData.get("TestovanyNarodnost") == "CZ" ? getDatumNarozeniZRodneCislo(zadankaFormData.get("TestovanyCisloPojistence")) : zadankaFormData.get("TestovanyDatumNarozeni");
+    zadankaSentData["TestovanyNarodnostNazev"] = zadankaFormData.get("TestovanyNarodnost");
+    zadankaSentData["OrdinaceVystavil"] = zadankaFormData.get("OrdinaceVystavil");
     var IsAntigenTypyTestuElement = document.getElementById("TypyTestuList_2__Selected");
     zadankaSentData["IsAntigenTypyTestu"] = IsAntigenTypyTestuElement ? IsAntigenTypyTestuElement.checked : false;
     const UseTestRegisters = getUseTestRegisters(window.location.hostname);;
