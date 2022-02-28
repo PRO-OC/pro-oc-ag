@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
 function addZadankaToSyncStorage(where, zadanka) {
     chrome.storage.sync.get(where, function(syncData) {
 
-        if(!Array.isArray(syncData[where])) {
+        if(!syncData || !Array.isArray(syncData[where])) {
             syncData = {
                 [where] : []
             };

@@ -731,7 +731,7 @@ function isZadankaToRemove(zadanka) {
 
 function loadAndFilterZadankyToRemove(callback) {
   chrome.storage.sync.get(CHROME_STORAGE_NAMESPACE, (data) => {
-    if(Array.isArray(data[CHROME_STORAGE_NAMESPACE])) {
+    if(data && Array.isArray(data[CHROME_STORAGE_NAMESPACE])) {
 
       data[CHROME_STORAGE_NAMESPACE] = data[CHROME_STORAGE_NAMESPACE].filter(function(zadanka) {
         return !isZadankaToRemove(zadanka) ? true : false;
