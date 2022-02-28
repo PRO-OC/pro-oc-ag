@@ -710,8 +710,8 @@ function loadAndDisplayZadankyKPotvrzeni() {
   });
 }
 
-chrome.storage.onChanged.addListener(function(changeSet) {
-  if(changeSet[CHROME_STORAGE_NAMESPACE] && changeSet[CHROME_STORAGE_NAMESPACE].newValue) {
+chrome.storage.onChanged.addListener(function(changeSet, area) {
+  if(area == 'sync' && changeSet[CHROME_STORAGE_NAMESPACE] && changeSet[CHROME_STORAGE_NAMESPACE].newValue) {
     window.location.reload();
   }
 });
