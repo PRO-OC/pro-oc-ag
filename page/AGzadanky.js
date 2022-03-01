@@ -278,7 +278,11 @@ function getAGVyrobceTestuKod(vyrobceTestuNazev, vyrobceTestuKodOptions, vyrobce
     if(xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
       var data = JSON.parse(xhr.responseText);
 
-      data.forEach(vyrobce => {
+      if(!data || !data.deviceList) {
+        callback(null);
+      }
+
+      data.deviceList.forEach(vyrobce => {
         if(vyrobce.commercial_name + " - " + vyrobce.manufacturer.name == vyrobceTestuNazev) {
           callback(vyrobce.id_device);
           return;
@@ -289,12 +293,6 @@ function getAGVyrobceTestuKod(vyrobceTestuNazev, vyrobceTestuKodOptions, vyrobce
   xhr.send();
 }
 
-function printCertifikat(useTestRegisters, cislo) {
-  getRegistrCUDOvereniGetCertifikatCisloZadankyUrl(useTestRegisters, cislo, function(url) {
-    chrome.downloads.download({url});
-  });
-}
-
 function addZadankaCertifikatButtonToTr(td, text, zadanka) {
 
   var input = document.createElement("input");
@@ -303,7 +301,30 @@ function addZadankaCertifikatButtonToTr(td, text, zadanka) {
   input.setAttribute("class", "button-action ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only")
 
   input.addEventListener('click', function() {
-    printCertifikat(zadanka.UseTestRegisters, zadanka.Cislo);
+
+    getRegistrCUDOvereniGetCertifikatCisloZadankyUrl(zadanka.UseTestRegisters, zadanka.Cislo, function(url) {
+
+      if(typeof browser === 'undefined') {
+        chrome.downloads.download({url});
+      } else {
+        var xhrCertifikat = new XMLHttpRequest();
+        xhrCertifikat.open("GET", url, true);
+        xhrCertifikat.setRequestHeader("Content-Type","application/json; charset=UTF-8");
+        xhrCertifikat.responseType = 'blob';
+        xhrCertifikat.onreadystatechange = function() {
+          if(xhrCertifikat.readyState === XMLHttpRequest.DONE && xhrCertifikat.status == 200) {
+
+            var file = new Blob([xhrCertifikat.response], { 
+              type: "application/pdf" 
+            });
+
+            var fileUrl = URL.createObjectURL(file);
+            window.open(fileUrl);
+          }
+        }
+        xhrCertifikat.send();
+      }
+    });
   }, false);
 
   td.appendChild(input);
@@ -552,7 +573,29 @@ function addZadankaZadatVysledekNegativniButtonToTd(td, text, zadanka, jeVyzadov
                                 updateZadankaKPotvrzeniSyncStorage(zadanka);
 
                                 if(jeVyzadovanyCertifikat) {
-                                  printCertifikat(zadanka.UseTestRegisters, zadanka.Cislo);
+                                  getRegistrCUDOvereniGetCertifikatCisloZadankyUrl(zadanka.UseTestRegisters, zadanka.Cislo, function(url) {
+
+                                    if(typeof browser === 'undefined') {
+                                      chrome.downloads.download({url});
+                                    } else {
+                                      var xhrCertifikat = new XMLHttpRequest();
+                                      xhrCertifikat.open("GET", url, true);
+                                      xhrCertifikat.setRequestHeader("Content-Type","application/json; charset=UTF-8");
+                                      xhrCertifikat.responseType = 'blob';
+                                      xhrCertifikat.onreadystatechange = function() {
+                                        if(xhrCertifikat.readyState === XMLHttpRequest.DONE && xhrCertifikat.status == 200) {
+                              
+                                          var file = new Blob([xhrCertifikat.response], { 
+                                            type: "application/pdf" 
+                                          });
+                              
+                                          var fileUrl = URL.createObjectURL(file);
+                                          window.open(fileUrl);
+                                        }
+                                      }
+                                      xhrCertifikat.send();
+                                    }
+                                  });
                                 } else {
                                   location.reload();
                                 }

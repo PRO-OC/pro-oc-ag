@@ -143,7 +143,6 @@ function getZadankaDataFromSessionStorage() {
 
 function setZadankaDataToSessionStorage(zadankaForm) {
 
-    console.log(zadankaForm);
     var zadankaFormData = new FormData(zadankaForm);
 
     var OrdinaceVystavilDate = new Date();
