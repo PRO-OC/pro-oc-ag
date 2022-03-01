@@ -48,6 +48,12 @@ function getRegistrCUDOvereniCisloPojistenceUIUrl(useTestRegisters, callback) {
   });
 }
 
+function getRegistrCUDOvereniPrihlaseni(useTestRegisters, callback) {
+  getRegistrUrl(useTestRegisters, function(registrUrl) {
+    callback(registrUrl + "/Registr/CUD/Overeni/Prihlaseni");
+  });
+}
+
 function getRegistrCUDOvereniPotvrditUrl(useTestRegisters, callback) {
   getRegistrUrl(useTestRegisters, function(registrUrl) {
     callback(registrUrl + "/Registr/CUD/Overeni/Potvrdit");
@@ -678,30 +684,17 @@ function displayZadankyKPotvrzeni(zadanky) {
         }
       }
 
-      getRegistrLoginCookies(zadanka.UseTestRegisters, function(cookieParams) {
+      if(zadanka.ProvedenOdber) {
+        var td = document.createElement("td");
+        addZadankaCertifikatButtonToTr(td, "Stáhnout certifikát", zadanka);
+        tr.appendChild(td);
+      } else {
+        addTextTdToTr(tr, "Není potvrzen odběr.");
+      }
 
-        var kodOsoby = cookieParams.get("kodOsoby");
-        var heslo = cookieParams.get("heslo");
-
-        if(kodOsoby && heslo) {
-          var td = document.createElement("td");
-          // remove this statement for test purpose printing certificate
-          if(zadanka.ProvedenOdber) {
-            addZadankaCertifikatButtonToTr(td, "Stáhnout certifikát", zadanka);
-          }
-          tr.appendChild(td);
-
-          var tdActions = document.createElement("td");
-          addActions(tdActions, zadanka);
-          tr.appendChild(tdActions);
-        } else {
-          addTextTdToTr(tr);
-
-          var tdActions = document.createElement("td");
-          addActions(tdActions, zadanka);
-          tr.appendChild(tdActions);
-        }
-      });
+      var tdActions = document.createElement("td");
+      addActions(tdActions, zadanka);
+      tr.appendChild(tdActions);
 
       zadankyElement.insertBefore(tr, zadankyElement.firstChild);
    });
