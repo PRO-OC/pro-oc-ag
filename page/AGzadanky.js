@@ -755,7 +755,7 @@ function loadAndDisplayZadankyKPotvrzeni() {
 
 chrome.storage.onChanged.addListener(function(changeSet, area) {
   if(area == 'sync' && changeSet[CHROME_STORAGE_NAMESPACE] && changeSet[CHROME_STORAGE_NAMESPACE].newValue) {
-    loadAndDisplayZadankyKPotvrzeni();
+    displayZadankyKPotvrzeni(changeSet[CHROME_STORAGE_NAMESPACE].newValue);
   }
 });
 
