@@ -14,3 +14,7 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 
 - Pro funkčnost funkcí zmíněných výše je nutné v nastavení zadat výrobce AG testu.
 ![Preview](preview/nastaveni.png)
+
+## Instalace
+
+- Pro funkčnost funkcí zmíněných výše je nutné v nastavení prohlížeče povolit vyskakování popup oken, u Firefox např. v Exceptions pro Block pop-up windows přidat ```moz-extension://<id-rozsireni>```
