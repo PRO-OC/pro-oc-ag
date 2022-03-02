@@ -70,7 +70,7 @@ function isUrlZadanka(hostname, page) {
     const registrDomain = getRegistrDomain();
     const testRegistrDomain = getTestRegistrDomain();
 
-    const eregRegistrDomain = getEregRegistrUrl();
+    const eregRegistrDomain = getEregRegistrDomain();
     const testEregRegistrDomain = getTestEregRegistrDomain();
 
     if((hostname == registrDomain || hostname == testRegistrDomain) && (page == getRegistrZadankaOdberneMistoPage() || page == getRegistrZadankaPage())) {
