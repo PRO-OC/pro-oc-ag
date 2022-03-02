@@ -67,15 +67,15 @@ function getEregRegistrZadankaPage() {
 
 function isUrlZadanka(hostname, page) {
 
-    const registrUrl = getRegistrUrl();
-    const testRegistrUrl = getTestRegistrUrl();
+    const registrDomain = getRegistrDomain();
+    const testRegistrDomain = getTestRegistrDomain();
 
-    const eregRegistrUrl = getEregRegistrUrl();
-    const testEregRegistrUrl = getTestEregRegistrDomain();
+    const eregRegistrDomain = getEregRegistrUrl();
+    const testEregRegistrDomain = getTestEregRegistrDomain();
 
-    if((hostname == registrUrl || hostname == testRegistrUrl) && (page == getRegistrZadankaOdberneMistoPage() || page == getRegistrZadankaPage())) {
+    if((hostname == registrDomain || hostname == testRegistrDomain) && (page == getRegistrZadankaOdberneMistoPage() || page == getRegistrZadankaPage())) {
         return true;
-    } else if ((hostname == eregRegistrUrl || hostname == testEregRegistrUrl) && (page == getEregRegistrZadankaPage())) {
+    } else if ((hostname == eregRegistrDomain || hostname == testEregRegistrDomain) && (page == getEregRegistrZadankaPage())) {
         return true;
     } else {
         return false;
