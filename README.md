@@ -1,5 +1,7 @@
 # PRO OC AG
 
+[Rozšíření do Mozilla Firefox](https://addons.mozilla.org/addon/pro-oc-ag/)
+
 ![Preview](preview/nahled.png)
 
 Rozšíření přidává užitečné funkce do modulu [Pacienti COVID-19](https://ereg.ksrzis.cz/Registr/CUDZadanky/VyhledaniPacienta) a [Žádanky testů COVID-19](https://eregpublicsecure.ksrzis.cz/Registr/CUD/Overeni) s cílem usnadnit dvoufázové antigenní testování. Rozšíření nevyžaduje nainstalové žádné jiné rozšíření.
