@@ -428,7 +428,7 @@ function addZadankaPotvrditButtonToTr(tr, text, zadanka) {
                 var data = JSON.parse(xhr.responseText);
 
                 if(data.Vysledek == "Stornovano" || data.Vysledek == "ZadankaNeexistuje") {
-                  removeZadankaKPotvrzeniSyncStorage(zadanka.Cislo);                  
+                  removeZadankaFromSyncStorage(zadanka.Cislo);                  
                   alert("Žádanka byla stornována nebo neexistuje. Bude odebrána.");
                   location.reload();
                 } else if(
@@ -454,7 +454,7 @@ function addZadankaPotvrditButtonToTr(tr, text, zadanka) {
                       xhrPotvrdit.onreadystatechange = function() {
                         if(xhrPotvrdit.readyState === XMLHttpRequest.DONE && xhrPotvrdit.status == 200) {
                           zadanka["ProvedenOdber"] = new Date().toISOString();
-                          updateZadankaKPotvrzeniSyncStorage(zadanka);
+                          updateZadankaInSyncStorage(zadanka);
                           location.reload();
                         }
                       };
@@ -465,7 +465,7 @@ function addZadankaPotvrditButtonToTr(tr, text, zadanka) {
                   data.PotvrzeniOdberu && data.PotvrzeniOdberu[0].DatumPotvrzeni) {
 
                   zadanka["ProvedenOdber"] = data.PotvrzeniOdberu[0].DatumPotvrzeni;
-                  updateZadankaKPotvrzeniSyncStorage(zadanka);
+                  updateZadankaInSyncStorage(zadanka);
                   location.reload();
                 }
               }
@@ -530,7 +530,7 @@ function addZadankaZadatVysledekNegativniButtonToTd(td, text, zadanka, jeVyzadov
                 var data = JSON.parse(xhr.responseText);
 
                 if(data.Vysledek == "Stornovano" || data.Vysledek == "ZadankaNeexistuje") {
-                  removeZadankaKPotvrzeniSyncStorage(zadanka.Cislo);
+                  removeZadankaFromSyncStorage(zadanka.Cislo);
                   window.alert("Žádanka byla stornována nebo neexistuje. Bude odebrána.");
                   location.reload();
                 } else if(
@@ -576,7 +576,7 @@ function addZadankaZadatVysledekNegativniButtonToTd(td, text, zadanka, jeVyzadov
                             xhrPotvrdit.onreadystatechange = function() {
                               if(xhrPotvrdit.readyState === XMLHttpRequest.DONE && xhrPotvrdit.status == 200) {
                                 zadanka["Vysledek"] = "N";
-                                updateZadankaKPotvrzeniSyncStorage(zadanka);
+                                updateZadankaInSyncStorage(zadanka);
 
                                 if(jeVyzadovanyCertifikat) {
                                   getRegistrCUDOvereniGetCertifikatCisloZadankyUrl(zadanka.UseTestRegisters, zadanka.Cislo, function(url) {
@@ -611,7 +611,7 @@ function addZadankaZadatVysledekNegativniButtonToTd(td, text, zadanka, jeVyzadov
                           });
                         } else {
                           zadanka["Vysledek"] = "Ano";
-                          updateZadankaKPotvrzeniSyncStorage(zadanka);
+                          updateZadankaInSyncStorage(zadanka);
                           location.reload();
                         }
                       }
@@ -652,77 +652,68 @@ function displayZadankyKPotvrzeni(zadanky) {
   var zadankyElement = document.getElementById("zadanky");
   zadankyElement.innerHTML = "";
 
-  if(Array.isArray(zadanky)) {
-    zadanky.forEach((zadanka) => {
+  if(!zadanky) {
+    return;
+  }
 
-      var tr = document.createElement("tr");
+  var zadankyArray = Object.values(zadanky);
+  var sortedZadankyArrayByOrdinaceVystavilDate = zadankyArray.sort(function(a, b) {
+    return ((a.OrdinaceVystavilDate < b.OrdinaceVystavilDate) ? -1 : ((a.OrdinaceVystavilDate > b.OrdinaceVystavilDate) ? 1 : 0));
+  });
 
-      addTextTdToTr(tr, zadanka.UseTestRegisters ? "Ano" : "Ne");
-      addTextTdToTr(tr, getDateWithHoursAndMinutes(zadanka.OrdinaceVystavilDate));
-      addTextTdToTr(tr, zadanka.Cislo);
-      addTextTdToTr(tr, zadanka.TestovanyJmeno);
-      addTextTdToTr(tr, zadanka.TestovanyPrijmeni);
-      addTextTdToTr(tr, zadanka.TestovanyCisloPojistence);
-      addTextTdToTr(tr, zadanka.TestovanyNarodnostNazev);
-      addTextTdToTr(tr, zadanka.TestovanyDatumNarozeni);
-      addTextTdToTr(tr, zadanka.OrdinaceVystavil);
-      if(zadanka.ProvedenOdber) {
-        addTextTdToTr(tr, getDateWithHoursAndMinutes(zadanka.ProvedenOdber));
-      } else {
-        addZadankaPotvrditButtonToTr(tr, "Potvrdit provedení odběru", zadanka);
-      }
-      if(zadanka.Vysledek) {
-        addTextTdToTr(tr, zadanka.Vysledek);
-      } else {
-        if (zadanka.ProvedenOdber) {
-          var td = document.createElement("td");
-          addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek", zadanka, false);
-          addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek a stáhnout certifikát", zadanka, true);
-          tr.appendChild(td);
-        } else {
-          addTextTdToTr(tr, "Není potvrzen odběr.");
-        }
-      }
+  sortedZadankyArrayByOrdinaceVystavilDate.forEach(function(zadanka) {
 
-      if(zadanka.ProvedenOdber) {
+    var tr = document.createElement("tr");
+
+    addTextTdToTr(tr, zadanka.UseTestRegisters ? "Ano" : "Ne");
+    addTextTdToTr(tr, getDateWithHoursAndMinutes(zadanka.OrdinaceVystavilDate));
+    addTextTdToTr(tr, zadanka.Cislo);
+    addTextTdToTr(tr, zadanka.TestovanyJmeno);
+    addTextTdToTr(tr, zadanka.TestovanyPrijmeni);
+    addTextTdToTr(tr, zadanka.TestovanyCisloPojistence);
+    addTextTdToTr(tr, zadanka.TestovanyNarodnostNazev);
+    addTextTdToTr(tr, zadanka.TestovanyDatumNarozeni);
+    addTextTdToTr(tr, zadanka.OrdinaceVystavil);
+    if(zadanka.ProvedenOdber) {
+      addTextTdToTr(tr, getDateWithHoursAndMinutes(zadanka.ProvedenOdber));
+    } else {
+      addZadankaPotvrditButtonToTr(tr, "Potvrdit provedení odběru", zadanka);
+    }
+    if(zadanka.Vysledek) {
+      addTextTdToTr(tr, zadanka.Vysledek);
+    } else {
+      if (zadanka.ProvedenOdber) {
         var td = document.createElement("td");
-        addZadankaCertifikatButtonToTr(td, "Stáhnout certifikát", zadanka);
+        addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek", zadanka, false);
+        addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek a stáhnout certifikát", zadanka, true);
         tr.appendChild(td);
       } else {
         addTextTdToTr(tr, "Není potvrzen odběr.");
       }
-
-      var tdActions = document.createElement("td");
-      addActions(tdActions, zadanka);
-      tr.appendChild(tdActions);
-
-      zadankyElement.insertBefore(tr, zadankyElement.firstChild);
-   });
-  }
-}
-
-function removeZadankaKPotvrzeniSyncStorage(cisloZadanky) {
-  chrome.storage.sync.get(CHROME_STORAGE_NAMESPACE, (data) => {
-    if(Array.isArray(data[CHROME_STORAGE_NAMESPACE])) {
-      var newZadanky = data[CHROME_STORAGE_NAMESPACE].filter(function(z) { 
-        return z.Cislo != cisloZadanky;
-      });
-      chrome.storage.sync.set({[CHROME_STORAGE_NAMESPACE]: newZadanky});
     }
+
+    if(zadanka.ProvedenOdber) {
+      var td = document.createElement("td");
+      addZadankaCertifikatButtonToTr(td, "Stáhnout certifikát", zadanka);
+      tr.appendChild(td);
+    } else {
+      addTextTdToTr(tr, "Není potvrzen odběr.");
+    }
+
+    var tdActions = document.createElement("td");
+    addActions(tdActions, zadanka);
+    tr.appendChild(tdActions);
+
+    zadankyElement.insertBefore(tr, zadankyElement.firstChild);
   });
 }
 
-function updateZadankaKPotvrzeniSyncStorage(zadanka) {
-  chrome.storage.sync.get(CHROME_STORAGE_NAMESPACE, (data) => {
-    if(Array.isArray(data[CHROME_STORAGE_NAMESPACE])) {
-      data[CHROME_STORAGE_NAMESPACE].forEach(function(z, index) {
-        if (z.Cislo == zadanka.Cislo) {
-          data[CHROME_STORAGE_NAMESPACE][index] = zadanka;
-        }
-      });
-      chrome.storage.sync.set({[CHROME_STORAGE_NAMESPACE]: data[CHROME_STORAGE_NAMESPACE]});
-    }
-  });
+function removeZadankaFromSyncStorage(cisloZadanky) {
+  chrome.storage.sync.remove(cisloZadanky);
+}
+
+function updateZadankaInSyncStorage(zadanka) {
+  chrome.storage.sync.set({[zadanka.Cislo]: zadanka});
 }
 
 function loadAndDisplayZadankyKPotvrzeni() {
@@ -739,16 +730,14 @@ function loadAndDisplayZadankyKPotvrzeni() {
     console.log(allKeys);
   });*/
 
-  chrome.storage.sync.get(CHROME_STORAGE_NAMESPACE, (data) => {
-    if(data && Array.isArray(data[CHROME_STORAGE_NAMESPACE])) {
-      displayZadankyKPotvrzeni(data[CHROME_STORAGE_NAMESPACE]);
-    }
+  chrome.storage.sync.get(null, function(data) {
+    displayZadankyKPotvrzeni(data);
   });
 }
 
 chrome.storage.onChanged.addListener(function(changeSet, area) {
-  if(area == 'sync' && changeSet[CHROME_STORAGE_NAMESPACE] && changeSet[CHROME_STORAGE_NAMESPACE].newValue) {
-    displayZadankyKPotvrzeni(changeSet[CHROME_STORAGE_NAMESPACE].newValue);
+  if(area == 'sync') {
+    loadAndDisplayZadankyKPotvrzeni();
   }
 });
 
