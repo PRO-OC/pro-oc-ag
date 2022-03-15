@@ -1,5 +1,4 @@
 // duplicated in popup.js, background.js, options.js (like inferface)
-const CHROME_STORAGE_NAMESPACE = "pro-oc-ag";
 const CHROME_STORAGE_OPTIONS_NAMESPACE = "pro-oc-ag-options";
 
 const AG_VYROBCE_TESTU_KOD = "AGVyrobceTestuKod";
@@ -48,12 +47,6 @@ function getRegistrCUDOvereniCisloPojistenceUIUrl(useTestRegisters, callback) {
   });
 }
 
-function getRegistrCUDOvereniPrihlaseni(useTestRegisters, callback) {
-  getRegistrUrl(useTestRegisters, function(registrUrl) {
-    callback(registrUrl + "/Registr/CUD/Overeni/Prihlaseni");
-  });
-}
-
 function getRegistrCUDOvereniPotvrditUrl(useTestRegisters, callback) {
   getRegistrUrl(useTestRegisters, function(registrUrl) {
     callback(registrUrl + "/Registr/CUD/Overeni/Potvrdit");
@@ -88,22 +81,6 @@ function getRegistrCUDVyhledaniPacientaUrl(useTestRegisters, callback) {
   });
 }
 
-function getRegistrCUDVyhledaniPacientaUrlParams(zadanka) {
-  var urlParams = new URLSearchParams();
-  urlParams.set("DuvodVyhledani", "VyhledatPacienta");
-  urlParams.set("TypVyhledani", zadanka.TestovanyNarodnostNazev == "CZ" ? "JmenoPrijmeniRC" : "CizinecJmenoPrijmeniDatumNarozniObcanstvi");
-  urlParams.set("Jmeno", zadanka.TestovanyJmeno);
-  urlParams.set("Prijmeni", zadanka.TestovanyPrijmeni);
-  if(zadanka.TestovanyNarodnostNazev == "CZ") {
-    urlParams.set("RodneCislo", zadanka.TestovanyCisloPojistence);
-  } else {
-    urlParams.set("DatumNarozeni", zadanka.TestovanyDatumNarozeni);
-    urlParams.set("ZemeKod", zadanka.TestovanyNarodnostNazev);
-  }
-  urlParams.set("_submit", "None");
-  return urlParams;
-}
-
 function getRegistrCUDOvereniCisloZadankyUrlParams(kodOsoby, heslo, cisloZadanky) {
   var urlParams = new URLSearchParams();
 
@@ -134,25 +111,6 @@ function addTdLinkToTr(tr, url, text) {
 
   td.appendChild(a);
   tr.appendChild(td);
-}
-
-function addZadankaPotvrditAStahnoutCertificateButtonToTr(td, text, cisloZadanky) {
-
-  var input = document.createElement("input");
-  input.type = "button";
-  input.value = text;
-  input.setAttribute("class", "button-other ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only")
-
-  input.addEventListener('click', function() {
-    
-    var confirmWindow = window.confirm("Opravdu zadat negativní výsledek AG testu?");
-    if (confirmWindow == true) {
-      addNegativeResultToAgTestAndDownloadCertificate(cisloZadanky);
-    }
-
-  }, false);
-
-  td.appendChild(input);
 }
 
 function addOckoUzisProfilLinkToTr(td, url, text, Jmeno, Prijmeni, DatumNarozeni, Narodnost, TestovanyCisloPojistence) {
@@ -481,7 +439,7 @@ function addZadankaPotvrditButtonToTr(tr, text, zadanka) {
   tr.appendChild(td);
 }
 
-function addZadankaZadatVysledekNegativniButtonToTd(td, text, zadanka, jeVyzadovanyCertifikat) {
+function addZadankaZadatNegativniVysledekButtonToTd(td, text, zadanka, jeVyzadovanyCertifikat = false) {
 
   var input = document.createElement("input");
   input.type = "button";
@@ -684,8 +642,8 @@ function displayZadankyKPotvrzeni(zadanky) {
     } else {
       if (zadanka.ProvedenOdber) {
         var td = document.createElement("td");
-        addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek", zadanka, false);
-        addZadankaZadatVysledekNegativniButtonToTd(td, "Zadat negativní výsledek a stáhnout certifikát", zadanka, true);
+        addZadankaZadatNegativniVysledekButtonToTd(td, "Zadat negativní výsledek", zadanka);
+        addZadankaZadatNegativniVysledekButtonToTd(td, "Zadat negativní výsledek a stáhnout certifikát", zadanka, true);
         tr.appendChild(td);
       } else {
         addTextTdToTr(tr, "Není potvrzen odběr.");
@@ -719,9 +677,6 @@ function updateZadankaInSyncStorage(zadanka) {
 function loadAndDisplayZadankyKPotvrzeni() {
   // Testing purpose: clear entire storage
   // chrome.storage.sync.clear();
-
-  // Testing purpose: clear zadanky storage
-  // chrome.storage.sync.set({[CHROME_STORAGE_NAMESPACE]: []});
 
   // Testing purpose: show entire storage
   /*chrome.storage.sync.get(null, function(items) {
