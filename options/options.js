@@ -4,6 +4,7 @@ const CHROME_STORAGE_OPTIONS_NAMESPACE = "pro-oc-ag-options";
 const AG_VYROBCE_TESTU_KOD = "AGVyrobceTestuKod";
 const AG_VYROBCE_TESTU_TITLE = "AGVyrobceTestuTitle";
 const AG_VYROBCE_LIST_URL = "AGVyrobceListUrl";
+const AG_CERT = "AGCert";
 const SUBMIT_RESULT = "SubmitResult";
 const RELOAD_RESULT = "ReloadResult";
 
@@ -91,11 +92,13 @@ function setAGVyrobceTestuList(AGVyrobceTestuList, AGVyrobceTestuKodValue) {
 
 function saveOptions(
   AGVyrobceTestuKod,
-  AGVyrobceListUrl
+  AGVyrobceListUrl,
+  AGCert
   ) {
 
   var options = new URLSearchParams();
 
+  options.set(AG_CERT, AGCert);
   options.set(AG_VYROBCE_LIST_URL, AGVyrobceListUrl);
 
   if(AGVyrobceTestuKod) {
@@ -154,10 +157,18 @@ if(zadankaForm) {
 
     var zadankaFormData = new FormData(zadankaForm);
 
-    saveOptions(
-      zadankaFormData.get(AG_VYROBCE_TESTU_KOD) ? zadankaFormData.get(AG_VYROBCE_TESTU_KOD) : "",
-      zadankaFormData.get(AG_VYROBCE_LIST_URL)
-    )
+    var AGCert = document.getElementById(AG_CERT);
+    if(AGCert.files[0]) {
+      var reader = new FileReader()
+      reader.onload = function() {
+        saveOptions(
+          zadankaFormData.get(AG_VYROBCE_TESTU_KOD) ? zadankaFormData.get(AG_VYROBCE_TESTU_KOD) : "",
+          zadankaFormData.get(AG_VYROBCE_LIST_URL),
+          reader.result
+        )
+      }
+      reader.readAsDataURL(AGCert.files[0]);
+    }
   });
 }
 
