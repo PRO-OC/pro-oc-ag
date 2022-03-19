@@ -134,7 +134,7 @@ function clearResult(elementId) {
 
 function setResult(elementId, text) {
   var result = document.getElementById(elementId);
-  result.innerHTML = text;
+  result.innerText = text;
 }
 
 function getOptions(callback) {
