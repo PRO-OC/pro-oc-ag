@@ -13,11 +13,19 @@ function addZadankaToSyncStorage(zadanka) {
   chrome.storage.sync.set({[zadanka.Cislo]: zadanka});
 }
 
-chrome.alarms.onAlarm.addListener(function(alarm) {
-  if(alarm.name == AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME) {
-    filterZadankyInSyncStorage();
-  }
-});
+if(typeof browser === 'undefined') {
+    chrome.alarms.onAlarm.addListener(function(alarm) {
+        if(alarm.name == AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME) {
+            filterZadankyInSyncStorage();
+        }
+    });
+} else {
+    browser.alarms.onAlarm.addListener(function(alarm) {
+        if(alarm.name == AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME) {
+            filterZadankyInSyncStorage();
+        }
+    });
+}
 
 function filterZadankyInSyncStorage() {
   chrome.storage.sync.get(null, (data) => {
@@ -34,13 +42,23 @@ function filterZadankyInSyncStorage() {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.alarms.get(AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME, alarm => {
-       if (!alarm) {
-          chrome.alarms.create(AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME, {
-            periodInMinutes: AUTO_REMOVE_CHROME_STORAGE_ALARM_PERIOD_MINS
-          });
-       }
-    });
+    if(typeof browser === 'undefined') {
+        chrome.alarms.get(AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME, alarm => {
+            if (!alarm) {
+                chrome.alarms.create(AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME, {
+                    periodInMinutes: AUTO_REMOVE_CHROME_STORAGE_ALARM_PERIOD_MINS
+                });
+            }
+        });
+    } else {
+        browser.alarms.get(AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME, alarm => {
+            if (!alarm) {
+                chrome.alarms.create(AUTO_REMOVE_CHROME_STORAGE_ALARM_NAME, {
+                    periodInMinutes: AUTO_REMOVE_CHROME_STORAGE_ALARM_PERIOD_MINS
+                });
+            }
+        });
+    }
 });
 
 function hasZadankaValidData(zadanka) {
