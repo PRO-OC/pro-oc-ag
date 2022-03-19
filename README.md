@@ -17,6 +17,12 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 - Pro funkčnost funkcí zmíněných výše je nutné v nastavení zadat výrobce AG testu.
 ![Preview](preview/nastaveni.png)
 
+- Umožňuje připravit k vytisknutí certifikát pro jednotlivé žádanky (s dotažením výsledku z ereg, případně se zadáním výsledku ručně do vyskakovacího okna, tedy např. ze SMS a čísla cestovního dokladu a místa narození pokud tyto údaje žádanka neobsahovala)
+
 ## Instalace
 
 - Pro funkčnost funkcí zmíněných výše je nutné v nastavení prohlížeče povolit vyskakování popup oken, u Firefox např. v Exceptions pro Block pop-up windows přidat ```moz-extension://<id-rozsireni>```
+
+## Použité knihovny
+
+- [pdf-lib v1.17.1](https://github.com/Hopding/pdf-lib/archive/refs/tags/v1.17.1.zip)

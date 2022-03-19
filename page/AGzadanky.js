@@ -5,6 +5,12 @@ const AG_VYROBCE_TESTU_KOD = "AGVyrobceTestuKod";
 const AG_VYROBCE_TESTU_TITLE = "AGVyrobceTestuTitle";
 const AG_VYROBCE_LIST_URL = "AGVyrobceListUrl";
 
+const AG_CERT = "AGCert";
+
+var PDFDocument = PDFLib.PDFDocument;
+var rgb = PDFLib.rgb;
+var StandardFonts = PDFLib.StandardFonts;
+
 function getRegistrDomain(useTestRegisters, callback) {
   callback(useTestRegisters ? "eregpublicsecure2.ksrzis.cz" : "eregpublicsecure.ksrzis.cz");
 }
@@ -632,6 +638,8 @@ function displayZadankyKPotvrzeni(zadanky) {
     addTextTdToTr(tr, zadanka.TestovanyNarodnostNazev);
     addTextTdToTr(tr, zadanka.TestovanyDatumNarozeni);
     addTextTdToTr(tr, zadanka.OrdinaceVystavil);
+    addTextTdToTr(tr, zadanka.TestovanyCisloCestovnihoDokladu);
+    addTextTdToTr(tr, zadanka.TestovanyMistoNarozeni);
     if(zadanka.ProvedenOdber) {
       addTextTdToTr(tr, getDateWithHoursAndMinutes(zadanka.ProvedenOdber));
     } else {
@@ -653,6 +661,7 @@ function displayZadankyKPotvrzeni(zadanky) {
     if(zadanka.ProvedenOdber) {
       var td = document.createElement("td");
       addZadankaCertifikatButtonToTr(td, "Stáhnout certifikát", zadanka);
+      addPrintCertificateButtonToTd(td, "Certifikát VFN", zadanka);
       tr.appendChild(td);
     } else {
       addTextTdToTr(tr, "Není potvrzen odběr.");
@@ -664,6 +673,155 @@ function displayZadankyKPotvrzeni(zadanky) {
 
     zadankyElement.insertBefore(tr, zadankyElement.firstChild);
   });
+}
+
+function getRegistrCUDVyhledaniPacientaUrlParams(zadanka) {
+  var urlParams = new URLSearchParams();
+  urlParams.set("DuvodVyhledani", "VyhledatPacienta");
+  urlParams.set("TypVyhledani", zadanka.TestovanyNarodnostNazev == "CZ" ? "JmenoPrijmeniRC" : "CizinecJmenoPrijmeniDatumNarozniObcanstvi");
+  urlParams.set("Jmeno", zadanka.TestovanyJmeno);
+  urlParams.set("Prijmeni", zadanka.TestovanyPrijmeni);
+  if(zadanka.TestovanyNarodnostNazev == "CZ") {
+    urlParams.set("RodneCislo", zadanka.TestovanyCisloPojistence);
+  } else {
+    urlParams.set("DatumNarozeni", zadanka.TestovanyDatumNarozeni);
+    urlParams.set("ZemeKod", zadanka.TestovanyNarodnostNazev);
+  }
+  urlParams.set("_submit", "None");
+  return urlParams;
+}
+
+function loadZadankaVysledek(zadanka, callback) {
+
+  getRegistrCUDVyhledaniPacientaUrl(zadanka.UseTestRegisters, function(url) {
+
+    var urlParams = getRegistrCUDVyhledaniPacientaUrlParams(zadanka);
+    var link = url + "?" + urlParams;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", link, true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
+
+        var parser = new DOMParser();
+        var responseDocument = parser.parseFromString(xhr.responseText, "text/html");
+
+        var divs = responseDocument.querySelectorAll('div.textField');
+        var cisloElement = Array.from(divs).find(el => {
+          return el.textContent.trim().includes(zadanka.Cislo)
+        });
+
+        try {
+          const stav = cisloElement.parentElement.nextSibling.nextSibling.childNodes[3].innerText.trim();
+
+          if(
+            stav != "PotvrzenoPozitivni" &&
+            stav != "PotvrzenoNegativni"
+            )
+          {
+            callback(null);
+          } else {
+            callback(stav == "PotvrzenoPozitivni" ? true : false);
+          }
+        } catch(e) {
+          callback(null);
+        }
+      }
+    };
+    xhr.send(urlParams.toString());
+  });
+}
+
+function addPrintCertificateButtonToTd(td, text, zadanka) {
+
+  var input = document.createElement("input");
+  input.type = "button";
+  input.value = text;
+  input.setAttribute("class", "button-action ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only")
+
+  input.addEventListener('click', function() {
+
+    loadZadankaVysledek(zadanka, (Vysledek) => {
+
+      if(Vysledek != true || Vysledek != false) {
+        Vysledek = !window.confirm("Výsledek negativní?");
+      }
+
+      if(!zadanka.TestovanyCisloCestovnihoDokladu) {
+        zadanka.TestovanyCisloCestovnihoDokladu = window.prompt("Číslo cestovního dokladu", "");
+      }
+
+      if(!zadanka.TestovanyMistoNarozeni) {
+        zadanka.TestovanyMistoNarozeni = window.prompt("Místo narození", "");
+      }
+
+      loadCertificatePdf(
+        function(existingPdfBytes) {
+
+          getOptionsFromLocalStorage(function(optionsURLSearchParams) {
+
+            var options = new URLSearchParams(optionsURLSearchParams);
+
+            var AGVyrobceTestuTitle = options.get(AG_VYROBCE_TESTU_TITLE);
+
+            if(!AGVyrobceTestuTitle) {
+              alert("V nastavení není uvedený výrobce testu.");
+              return;
+            }
+          
+            getCertificatePdf(
+              existingPdfBytes,
+              zadanka.TestovanyJmeno,
+              zadanka.TestovanyPrijmeni,
+              zadanka.TestovanyDatumNarozeni,
+              zadanka.TestovanyMistoNarozeni,
+              zadanka.TestovanyCisloCestovnihoDokladu,
+              zadanka.OrdinaceVystavilDate,
+              Vysledek,
+              AGVyrobceTestuTitle,
+              function(pdfDocumentObject) {
+                openPdfDocumentObject(pdfDocumentObject);
+              }
+            );
+          });
+        }
+      );
+    });
+  }, false);
+
+  td.appendChild(input);
+}
+
+function getOptionsFromLocalStorage(callback) {
+  chrome.storage.local.get([CHROME_STORAGE_OPTIONS_NAMESPACE], function(data) {
+    callback(data[CHROME_STORAGE_OPTIONS_NAMESPACE]);
+  });
+}
+
+function loadCertificatePdf(callback) {
+
+  getOptionsFromLocalStorage(function(data) {
+    var options = new URLSearchParams(data);
+    var PCRCertUrl = options.get(AG_CERT);
+
+    fetch(PCRCertUrl)
+      .then(response => {
+        response.arrayBuffer()
+      .then(existingPdfBytes => {
+        callback(existingPdfBytes);
+      }).catch(() => {
+        alert('Je nutné v nastavení nahrát vzor certifikátu.');
+      });
+    });
+  });
+}
+
+async function openPdfDocumentObject(pdf) {
+  var pdfBytes = await pdf.save();
+  var file = new Blob([pdfBytes], {type: "application/pdf"});
+  var fileUrl = URL.createObjectURL(file);
+  window.open(fileUrl);
 }
 
 function removeZadankaFromSyncStorage(cisloZadanky) {
@@ -699,3 +857,89 @@ chrome.storage.onChanged.addListener(function(changeSet, area) {
 window.onload = function() {
   loadAndDisplayZadankyKPotvrzeni();
 };
+
+async function getCertificatePdf(pdfBytes, Jmeno, Prijmeni, DatumNarozeniString, TestovanyMistoNarozeni, TravelDocumentId, DatumTestu, VysledekTestuJePositivni, Manufacturer, callback)  {
+  const pdfDoc = await PDFDocument.load(pdfBytes);
+
+  var DatumVystaveniString = new Date().toLocaleString("en-US", { year: '2-digit', day: '2-digit', month: '2-digit' });
+  var CasVystaveniString = new Date().toLocaleString("en-US", { hour: '2-digit', minute: '2-digit' });
+  var DatumTestuString = new Date(DatumTestu).toLocaleString("en-US", { year: '2-digit', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+  pdfDoc.registerFontkit(fontkit);
+
+  const fontUrl = chrome.runtime.getURL("assets/Ubuntu-R.ttf");
+  const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
+  const font = await pdfDoc.embedFont(fontBytes);
+
+  const form = pdfDoc.getForm();
+
+  form
+    .getTextField(
+      'Surname',
+    )
+    .setText(Prijmeni);
+
+  form
+    .getTextField(
+      'FirstName',
+    )
+    .setText(Jmeno);
+
+  form
+    .getTextField(
+      'DateOfBirth',
+    )
+    .setText(DatumNarozeniString);
+
+  form
+    .getTextField(
+      'PlaceOfBirth',
+    )
+    .setText(TestovanyMistoNarozeni);
+
+  form
+    .getTextField(
+      'TravelDocumentId',
+    )
+    .setText(TravelDocumentId);
+
+  form
+    .getTextField(
+      'DateOfTest',
+    )
+    .setText(DatumTestuString);
+
+  form
+    .getCheckBox(
+      VysledekTestuJePositivni ? 'ResultPositive' : 'ResultNegative',
+    )
+    .check();
+
+  form
+    .getTextField(
+      'Manufacturer',
+    )
+    .setText(Manufacturer);
+
+  form
+    .getTextField(
+      'Place',
+    )
+    .setText("Prague");
+
+  form
+    .getTextField(
+      'DateNow',
+    )
+    .setText(DatumVystaveniString);
+
+  form
+    .getTextField(
+      'TimeNow',
+    )
+    .setText(CasVystaveniString);
+
+  form.updateFieldAppearances(font);
+
+  callback(pdfDoc);
+}
