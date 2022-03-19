@@ -160,8 +160,20 @@ function setZadankaDataToSessionStorage(zadankaForm) {
     zadankaSentData["OrdinaceVystavil"] = zadankaFormData.get("OrdinaceVystavil");
     var IsAntigenTypyTestuElement = document.getElementById("TypyTestuList_2__Selected");
     zadankaSentData["IsAntigenTypyTestu"] = IsAntigenTypyTestuElement ? IsAntigenTypyTestuElement.checked : false;
-    const UseTestRegisters = getUseTestRegisters(window.location.hostname);;
+    const UseTestRegisters = getUseTestRegisters(window.location.hostname);
     zadankaSentData["UseTestRegisters"] = UseTestRegisters;
+
+    // Testing purpose
+    /*zadankaSentDataFake = {};
+    zadankaSentDataFake["OrdinaceVystavilDate"] = undefined;
+    zadankaSentDataFake["TestovanyCisloPojistence"] = undefined;
+    zadankaSentDataFake["TestovanyJmeno"] = undefined;
+    zadankaSentDataFake["TestovanyPrijmeni"] = undefined;
+    zadankaSentDataFake["TestovanyDatumNarozeni"] = undefined;
+    zadankaSentDataFake["TestovanyNarodnostNazev"] = undefined;
+    zadankaSentDataFake["OrdinaceVystavil"] = undefined;
+    zadankaSentDataFake["IsAntigenTypyTestu"] = true;
+    zadankaSentData["UseTestRegisters"] = UseTestRegisters;*/
 
     window.sessionStorage.setItem(getSessionStorageZadankaName(), JSON.stringify(zadankaSentData));
 }

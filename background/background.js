@@ -24,7 +24,7 @@ function filterZadankyInSyncStorage() {
     if(data) {
       var zadankaCislaToRemove = [];
       for(const [x, zadanka] of Object.entries(data)) {
-        if(zadanka.Cislo && isZadankaToRemove(zadanka)) {
+        if(!hasZadankaValidData(zadanka) || isZadankaToRemove(zadanka)) {
           zadankaCislaToRemove.push(zadanka.Cislo);
         }
       }
@@ -42,6 +42,22 @@ chrome.runtime.onInstalled.addListener(() => {
        }
     });
 });
+
+function hasZadankaValidData(zadanka) {
+    if(
+      zadanka.Cislo &&
+      zadanka.OrdinaceVystavilDate && 
+      zadanka.TestovanyCisloPojistence &&
+      zadanka.TestovanyJmeno &&
+      zadanka.TestovanyPrijmeni &&
+      zadanka.TestovanyDatumNarozeni &&
+      zadanka.TestovanyNarodnostNazev &&
+      zadanka.UseTestRegisters) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 function isZadankaToRemove(zadanka) {
     const OrdinaceVystavilDate = new Date(zadanka.OrdinaceVystavilDate);
