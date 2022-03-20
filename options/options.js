@@ -7,6 +7,8 @@ const AG_VYROBCE_LIST_URL = "AGVyrobceListUrl";
 const AG_CERT = "AGCert";
 const SUBMIT_RESULT = "SubmitResult";
 const RELOAD_RESULT = "ReloadResult";
+const RESET_RESULT = "ResetResult";
+const RESET_SYNC_STORAGE = "ResetSyncStorage";
 
 function setOptionsToLocalStorage(options) {
   chrome.storage.local.set({[CHROME_STORAGE_OPTIONS_NAMESPACE] : options});
@@ -213,3 +215,16 @@ window.onload = function() {
     setOptionTextInputValueToElement(AGVyrobceListUrl, AG_VYROBCE_LIST_URL);
   });
 };
+
+const ResetSyncStorageElement = document.getElementById(RESET_SYNC_STORAGE);
+
+ResetSyncStorageElement.addEventListener("click", function(event) {
+
+    event.preventDefault();
+
+    clearResult(RESET_RESULT);
+
+    chrome.storage.sync.set({}, function() {
+        setResult(RESET_RESULT, "Sdílené uložiště pro žádanky bylo zresetováno v " + new Date().toString() + ". Všechny žádanky tak byly smazány.");
+    });
+});
