@@ -803,9 +803,9 @@ function loadCertificatePdf(callback) {
 
   getOptionsFromLocalStorage(function(data) {
     var options = new URLSearchParams(data);
-    var PCRCertUrl = options.get(AG_CERT);
+    var AGCertUrl = options.get(AG_CERT);
 
-    fetch(PCRCertUrl)
+    fetch(AGCertUrl)
       .then(response => {
         response.arrayBuffer()
       .then(existingPdfBytes => {
