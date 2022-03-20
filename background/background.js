@@ -4,7 +4,7 @@ const AUTO_REMOVE_CHROME_STORAGE_MINS = 120;
 const AUTO_REMOVE_CHROME_STORAGE_ALARM_PERIOD_MINS = 1; // 0.1 testing purpose
 
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    if (msg.text === 'UlozitZadankaData' && msg.data) {
+    if (msg.text === 'UlozitZadankaData' && msg.data && msg.data.Cislo) {
         addZadankaToSyncStorage(msg.data);
     }
 });
@@ -33,7 +33,9 @@ function filterZadankyInSyncStorage() {
       var zadankaCislaToRemove = [];
       for(const [x, zadanka] of Object.entries(data)) {
         if(!hasZadankaValidData(zadanka) || isZadankaToRemove(zadanka)) {
-          zadankaCislaToRemove.push(zadanka.Cislo);
+          if(zadanka.Cislo) {
+            zadankaCislaToRemove.push(zadanka.Cislo);
+          }
         }
       }
       chrome.storage.sync.remove(zadankaCislaToRemove);
