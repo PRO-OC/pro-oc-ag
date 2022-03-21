@@ -26,3 +26,4 @@ Osobní informace pacientů podmíněné přihlášením do modulu [Pacienti COV
 ## Použité knihovny
 
 - [pdf-lib v1.17.1](https://github.com/Hopding/pdf-lib/archive/refs/tags/v1.17.1.zip)
+- [fontkit v1.1.1](https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js)
