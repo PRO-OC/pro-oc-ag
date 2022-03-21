@@ -224,7 +224,7 @@ ResetSyncStorageElement.addEventListener("click", function(event) {
 
     clearResult(RESET_RESULT);
 
-    chrome.storage.sync.set({}, function() {
+    chrome.storage.sync.clear(function() {
         setResult(RESET_RESULT, "Sdílené uložiště pro žádanky bylo zresetováno v " + new Date().toString() + ". Všechny žádanky tak byly smazány.");
     });
 });
