@@ -32,8 +32,9 @@ function filterZadankyInSyncStorage() {
     if(data) {
       var zadankaCislaToRemove = [];
       for(const [x, zadanka] of Object.entries(data)) {
-        if(
-            zadanka.IsAntigenTypyTestu && 
+        if(            
+            zadanka.IsAntigenTypyTestu != undefined &&
+            zadanka.IsAntigenTypyTestu &&
             (!hasZadankaValidData(zadanka) || isZadankaToRemove(zadanka))
         ) {
           if(zadanka.Cislo) {
